@@ -133,4 +133,19 @@ export class AuthService {
   private comparePassword(password: string, hash: string): boolean {
     return bcrypt.compareSync(password, hash);
   }
+
+  /**
+   * Logout user by removing their refresh token
+   * @param userId The ID of the user
+   * @returns Success message
+   */
+  async logout(userId: number): Promise<string> {
+    // Remove the refresh token from the database
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
+
+    return 'Logout successful';
+  }
 }

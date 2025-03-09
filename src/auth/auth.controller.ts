@@ -23,4 +23,11 @@ export class AuthController {
       refreshToken,
     });
   }
+
+  @Post('logout')
+  @UseGuards(JwtGuard)
+  async logout(@Req() req: Request): Promise<string> {
+    const userId = req.user.id;
+    return this.authService.logout(userId);
+  }
 }
