@@ -20,7 +20,8 @@ model User {
   deletedAt    DateTime?
   email        String    @unique
   username     String    @unique
-  password     String?
+  password     String
+  refreshToken String?
   status       String    @default("NEW")
   profile      UserProfile?
 }

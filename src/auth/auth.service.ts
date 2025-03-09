@@ -2,10 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   /**
    * Register a new user
@@ -58,6 +63,56 @@ export class AuthService {
       return `Hi (${newUser.username}) your account has been created.`;
     });
   }
+  /**
+   * Login user
+   * @param dto LoginDto
+   * @returns Access and refresh tokens
+   */
+  async login(
+    dto: LoginDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { email, password } = dto;
+
+    // Find the user by email
+    const user = await this.prismaService.user.findFirst({
+      where: { email },
+    });
+    if (!user) {
+      throw new BadRequestException('The email or password is incorrect');
+    }
+
+    // Compare passwords
+    const isMatch = this.comparePassword(password, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('The email or password is incorrect');
+    }
+
+    // Generate tokens
+    const { accessToken, refreshToken } = await this.generateTokens({
+      id: user.id,
+    });
+
+    // Update user with refresh token
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  /**
+   * Generate access and refresh tokens
+   * @param payload JwtPayload
+   * @returns Tokens
+   */
+  private async generateTokens(payload: { id: number }) {
+    const accessToken = await this.jwtService.signAsync(payload);
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+    return { accessToken, refreshToken };
+  }
 
   /**
    * Hash password
@@ -67,5 +122,15 @@ export class AuthService {
   private async hashPassword(password: string): Promise<string> {
     const salt = bcrypt.genSaltSync();
     return bcrypt.hashSync(password, salt);
+  }
+
+  /**
+   * Compare password with hash
+   * @param password Password to compare
+   * @param hash Password hash
+   * @returns Boolean result
+   */
+  private comparePassword(password: string, hash: string): boolean {
+    return bcrypt.compareSync(password, hash);
   }
 }

@@ -122,7 +122,7 @@ describe('AuthService', () => {
       });
       jest
         .spyOn(prismaService.userProfile, 'findFirst')
-        .mockResolvedValue(null); // Add this line
+        .mockResolvedValue(null);
       jest
         .spyOn(prismaService, '$transaction')
         .mockImplementation(async (callback) => {
