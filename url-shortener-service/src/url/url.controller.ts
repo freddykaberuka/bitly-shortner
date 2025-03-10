@@ -17,4 +17,8 @@ export class UrlController {
     return { url: longUrl };
   }
 
+  @Get('analytics/:shortCode')
+  async getAnalytics(@Param('shortCode') shortCode: string) {
+    return this.urlService.getAnalytics(shortCode);
+  }
 }
