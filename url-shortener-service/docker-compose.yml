@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   db:
     image: postgres:13
@@ -11,14 +12,37 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  url-shortener:
-    build: .
+  auth-service:
+    build: 
+      context: ./auth-service
+      dockerfile: ./Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/shortner_url?schema=public"
     depends_on:
       - db
+
+  url-shortener-service:
+    build: 
+      context: ./url-shortener-service
+      dockerfile: ./Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/shortner_url?schema=public"
+    depends_on:
+      - db
+
+  api-gateway:
+    build: 
+      context: ./gateway
+      dockerfile: ./Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - url-shortener-service
 
 volumes:
   postgres_data:
