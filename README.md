@@ -15,7 +15,6 @@
 - [🔭 Future Features](#future-features)
 - [🤝 Contributing](#contributing)
 - [🙏 Acknowledgements](#acknowledgements)
-- [📝 License](#license)
 
 ## 📖 About the Project <a name="about-project"></a>
 **URL Shortener** is a RESTful API that allows users to shorten long URLs into shorter, more manageable links. The project includes both backend and frontend components in pending.
@@ -117,12 +116,3 @@ I would like to express my gratitude to QT Global Software for the challenge.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-<!-- LICENSE -->
-
-## 📝 License <a name="license"></a>
-
-This project is [MIT](./LICENSE) licensed.
-
-_NOTE: we recommend using the [MIT license](https://choosealicense.com/licenses/mit/) - you can set it up quickly by [using templates available on GitHub](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository). You can also use [any other license](https://choosealicense.com/licenses/) if you wish._
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
