@@ -20,7 +20,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 3002
 
 # Start the application
-CMD ["npm", "run", "start:prod"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
